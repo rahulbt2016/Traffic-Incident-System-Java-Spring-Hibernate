@@ -1,0 +1,201 @@
+@charset "ISO-8859-1";
+
+/* Styles for headings */
+h1 {
+  font-size: 36px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+h3 {
+  font-size: 24px;
+  font-weight: bold;
+  margin-top: 40px;
+  margin-bottom: 10px;
+}
+
+/* Styles for form labels and inputs */
+label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+input[type="text"],
+input[type="password"] {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  width: 250px;
+  font-size: 16px;
+}
+
+input[type="submit"] {
+  padding: 8px 20px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+input[type="submit"]:hover {
+  background-color: #45a049;
+}
+
+/* Styles for tables */
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th, td {
+  text-align: left;
+  padding: 8px;
+}
+
+th {
+  background-color: #4CAF50;
+  color: white;
+}
+
+tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+
+/* Patient */
+/* Table styles */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+th, td {
+  text-align: left;
+  padding: 8px;
+  border-bottom: 1px solid #ddd;
+}
+
+th {
+  background-color: #0080ff;
+}
+
+/* Heading styles */
+h1, h3 {
+  margin-top: 40px;
+  margin-bottom: 20px;
+}
+
+/* Form styles */
+form {
+  margin-bottom: 20px;
+}
+
+label {
+  display: inline-block;
+  width: 100px;
+  margin-bottom: 10px;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="date"] {
+  padding: 8px;
+  width: 200px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+input[type="submit"],
+button[type="submit"] {
+  padding: 8px 16px;
+  background-color: #4CAF50;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+input[type="submit"]:hover,
+button[type="submit"]:hover {
+  background-color: #3e8e41;
+}
+
+/* Link styles */
+a {
+  color: #337ab7;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+
+/* Doctor */
+/* Style for headings */
+
+/* Style for paragraphs */
+/* style for p tags */
+  p {
+    margin: 10px; /* remove default margin */
+    font-size: 16px; /* set font size */
+    font-weight: bold;
+    line-height: 1.5; /* set line height */
+  }
+
+  /* style for even rows */
+  .even {
+    background-color: #f2f2f2; /* set background color */
+  }
+
+  /* style for odd rows */
+  .odd {
+    background-color: #80ffff; /* set background color */
+  }
+
+  /* style for container */
+  .container {
+    max-width: 800px; /* set max-width */
+    margin: 0 auto; /* center horizontally */
+    padding: 20px; /* add padding */
+  }
+
+/* Style for forms */
+form {
+  margin-top: 20px;
+}
+
+label {
+  font-size: 18px;
+  margin-right: 10px;
+}
+
+input[type=text],
+input[type=number],
+input[type=password] {
+  font-size: 18px;
+  padding: 5px 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+input[type=submit] {
+  font-size: 18px;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 4px;
+  background-color: #4CAF50;
+  color: white;
+  cursor: pointer;
+}
+
+input[type=submit]:hover {
+  background-color: #45a049;
+}

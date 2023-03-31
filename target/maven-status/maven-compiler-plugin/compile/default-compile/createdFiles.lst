@@ -1,0 +1,9 @@
+taxi\model\Booking.class
+taxi\model\Taxi.class
+taxi\dao\AdminDao.class
+taxi\dao\BookingDao.class
+taxi\dao\PassengerDao.class
+taxi\model\Admin.class
+taxi\controller\MainController.class
+taxi\model\Passenger.class
+taxi\dao\TaxiDao.class
