@@ -64,10 +64,6 @@
 		<!-- annotated classes -->
 		<property name="annotatedClasses">
 			<list>
-				<value>com.rt.model.Admin</value>
-				<value>com.rt.model.Taxi</value>
-				<value>com.rt.model.Passenger</value>
-				<value>com.rt.model.Booking</value>
 				<value>com.rt.model.Officer</value>
 				<value>com.rt.model.Vehicle</value>
 				<value>com.rt.model.Route</value>

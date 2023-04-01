@@ -22,18 +22,6 @@ import com.rt.model.*;
 
 @Controller
 public class MainController {
-
-	@Autowired
-	private AdminDao adminDao;
-
-	@Autowired
-	private TaxiDao taxiDao;
-
-	@Autowired
-	private PassengerDao passengerDao;
-
-	@Autowired
-	private BookingDao bookingDao;
 	
 	@Autowired
 	private OfficerDao officerDao;
@@ -82,6 +70,15 @@ public class MainController {
 		}
 
 	}
+	
+	@RequestMapping(value = "/logout", method = RequestMethod.GET) 
+	public String logout(Model m, HttpServletRequest request){
+		
+		HttpSession session = request.getSession();
+		session.invalidate();
+		
+		return "login";
+	}
 
 	
 	@RequestMapping(value = "/incidents", method = RequestMethod.GET)
@@ -117,56 +114,29 @@ public class MainController {
 		return "login";
 	}
 	
-//	@RequestMapping(value = "/new-incident", method = RequestMethod.GET)
-//	public ModelAndView showNewIncidentPage(HttpServletRequest request) {
-//	    ModelAndView mav = new ModelAndView("new-incident");
-//	    mav.addObject("loggedinOfficer", request.getSession().getAttribute("loggedinOfficer"));
-//	    HttpSession session = request.getSession();
-//	    Officer loggedInOfficer = (Officer)session.getAttribute("loggedinOfficer");
-//	    System.out.println(loggedInOfficer.getBranch());
-//	    return mav;
-//	}
-
-	
-	@RequestMapping("/pathlistoftaxis")
-	public String showListOfAllTaxis(Model m) {
-		List<Taxi> allTaxis = this.taxiDao.getAll();
-		m.addAttribute("listoftaxis", allTaxis);
-		return "listoftaxis";
-	}
-
-	@RequestMapping(value = "/handle-filtertaxi", method = RequestMethod.POST)
-	public String showListOfTaxisBySrcAndDest(@RequestParam String source, @RequestParam String destination, Model m) {
-		List<Taxi> allTaxis = this.taxiDao.getTaxisBySourceAndDestination(source, destination);
-		m.addAttribute("listoftaxis", allTaxis);
-		if (source.equals("") || destination.equals("")) {
-			allTaxis = this.taxiDao.getAll();
-			m.addAttribute("listoftaxis", allTaxis);
+	@RequestMapping(value = "/add-incident", method = RequestMethod.POST)
+	public String addIncident(Model m, HttpServletRequest request) {
+		
+		HttpSession session = request.getSession();
+		
+		if(session.getAttribute("loggedinOfficer") != null) {
+			Officer loggedInOfficer = (Officer) session.getAttribute("loggedinOfficer");
+			String incidentDate = request.getParameter("incidentDate");
+			int  routeId =  Integer.parseInt(request.getParameter("routeId"));
+			String  vehicleId = request.getParameter("vehicleId");
+			String description = request.getParameter("description");
+			
+			Route route = routeDao.getRoute(routeId);
+			Vehicle vehicle = vehicleDao.getVehicle(vehicleId);
+			Incident incident = new Incident(incidentDate, route, vehicle, description, loggedInOfficer);
+			incidentDao.saveIncident(incident);
+			
+			List<Incident> incidents = incidentDao.getIncidentsByOfficer(loggedInOfficer);
+			m.addAttribute("incidents", incidents);
+			return "incidents";
 		}
-		return "listoftaxis";
-	}
-
-	@RequestMapping(value = "/handle-booktaxi", method = RequestMethod.POST)
-	public String showRegistrationToBookTaxi(@RequestParam String taxiId, Model m) {
-		Taxi taxiById = taxiDao.getById(Integer.valueOf(taxiId));
-		m.addAttribute("taxibyid", taxiById);
-		return "bookingform";
-	}
-
-	@RequestMapping(value = "/handle-booking", method = RequestMethod.POST)
-	public String handleBookingRequest(@RequestParam String taxiId, @RequestParam String firstName,
-			@RequestParam String lastName, @RequestParam String phoneNumber, @RequestParam String age, Model m) {
-		Taxi taxiById = taxiDao.getById(Integer.valueOf(taxiId));
-		Passenger passenger = new Passenger();
-		passenger.setAge(age);
-		passenger.setFirstName(firstName);
-		passenger.setLastName(lastName);
-		passenger.setPhoneNumber(phoneNumber);
-		passengerDao.addPassenger(passenger);
-		Booking booking = new Booking(taxiById, passenger);
-		bookingDao.saveBooking(booking);
-		m.addAttribute("booking", booking);
-		return "success";
+		
+		return "login";
 	}
 
 }

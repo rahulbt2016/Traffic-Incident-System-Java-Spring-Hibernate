@@ -17,6 +17,10 @@ public class RouteDao {
 	@Autowired
 	private HibernateTemplate hibernateTemplate;
 	
+	//get route by route id
+	public Route getRoute(int routeId) {
+		return hibernateTemplate.get(Route.class, routeId);
+	}
 
 	//get all routes
 	public List<Route> getRoutes(){
