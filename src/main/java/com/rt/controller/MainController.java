@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -39,6 +40,13 @@ public class MainController {
 	
 	@Autowired
 	private IncidentDao incidentDao;
+	
+	@Autowired
+	private VehicleDao vehicleDao;
+	
+	@Autowired
+	private RouteDao routeDao;
+	
 
 	@RequestMapping("/")
 	public String home(Model m) {
@@ -66,6 +74,8 @@ public class MainController {
 		if (approved) {
 			m.addAttribute("loggedinOfficer", loggedInOfficer);
 			m.addAttribute("incidents", incidents);
+			HttpSession session = request.getSession();
+			session.setAttribute("loggedinOfficer", loggedInOfficer);
 			return "incidents";
 		} else {
 			return "error";
@@ -75,16 +85,47 @@ public class MainController {
 
 	
 	@RequestMapping(value = "/incidents", method = RequestMethod.GET)
-	public String displayIncidents(Model m) {
+	public String displayIncidents(Model m, HttpServletRequest request) {
+		
+		HttpSession session = request.getSession();
+		
+		if(session.getAttribute("loggedinOfficer") != null) {
+			Officer loggedInOfficer = (Officer) session.getAttribute("loggedinOfficer");
+			List<Incident> incidents = incidentDao.getIncidentsByOfficer(loggedInOfficer);
+			m.addAttribute("incidents", incidents);
+			return "incidents";
+		}
+		
 		return "login";
 	}
 	
 	@RequestMapping(value = "/new-incident", method = RequestMethod.GET)
-	public ModelAndView showNewIncidentPage(HttpServletRequest request) {
-	    ModelAndView mav = new ModelAndView("new-incident");
-	    mav.addObject("loggedinOfficer", request.getSession().getAttribute("loggedinOfficer"));
-	    return mav;
+	public String showNewIncidentPage(Model m, HttpServletRequest request) {
+		
+		HttpSession session = request.getSession();
+		
+		if(session.getAttribute("loggedinOfficer") != null) {
+			Officer loggedInOfficer = (Officer) session.getAttribute("loggedinOfficer");
+			List<Vehicle> vehicles = (List<Vehicle>) vehicleDao.getVehicles();
+			List<Route> routes = (List<Route>) routeDao.getRoutes();
+			m.addAttribute("vehicles", vehicles);
+			m.addAttribute("routes", routes);
+			
+			return "new-incident";
+		}
+		
+		return "login";
 	}
+	
+//	@RequestMapping(value = "/new-incident", method = RequestMethod.GET)
+//	public ModelAndView showNewIncidentPage(HttpServletRequest request) {
+//	    ModelAndView mav = new ModelAndView("new-incident");
+//	    mav.addObject("loggedinOfficer", request.getSession().getAttribute("loggedinOfficer"));
+//	    HttpSession session = request.getSession();
+//	    Officer loggedInOfficer = (Officer)session.getAttribute("loggedinOfficer");
+//	    System.out.println(loggedInOfficer.getBranch());
+//	    return mav;
+//	}
 
 	
 	@RequestMapping("/pathlistoftaxis")
