@@ -1,5 +1,6 @@
 package com.rt.controller;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
 import com.rt.dao.*;
@@ -34,6 +36,9 @@ public class MainController {
 	
 	@Autowired
 	private OfficerDao officerDao;
+	
+	@Autowired
+	private IncidentDao incidentDao;
 
 	@RequestMapping("/")
 	public String home(Model m) {
@@ -45,6 +50,7 @@ public class MainController {
 	public String handleLogin(@ModelAttribute Officer officer, HttpServletRequest request, Model m) {
 		List<Officer> officers = officerDao.getOfficers();
 		Officer loggedInOfficer = new Officer();
+		List<Incident> incidents = new ArrayList<>();
 		boolean approved = false;
 		for (Iterator iterator = officers.iterator(); iterator.hasNext();) {
 			Officer officer2 = (Officer) iterator.next();
@@ -52,60 +58,34 @@ public class MainController {
 			if (officer2.getPassword().equals(officer.getPassword()) && officer.getUsername().equals(officer2.getUsername())) {
 				approved = true;
 				loggedInOfficer = officer2;
+				incidents = incidentDao.getIncidentsByOfficer(loggedInOfficer);
 			}
 
 		}
 		
 		if (approved) {
 			m.addAttribute("loggedinOfficer", loggedInOfficer);
+			m.addAttribute("incidents", incidents);
 			return "incidents";
 		} else {
-			return "loginfailed";
+			return "error";
 		}
 
 	}
+
 	
-	// handle login form
-//		@RequestMapping(value = "/handle-login2", method = RequestMethod.POST)
-//		public RedirectView handleLogin2(@ModelAttribute Admin admin, HttpServletRequest request, Model m) {
-//			List<Admin> admins = adminDao.getAdmins();
-//			boolean approved = false;
-//			for (Iterator iterator = admins.iterator(); iterator.hasNext();) {
-//				Admin admin2 = (Admin) iterator.next();
-//				System.out.println(admin2.getUsername());
-//				System.out.println(admin2.getPassword());
-//				System.out.println(admin.getPassword());
-//				if (admin2.getPassword().equals(admin.getPassword()) && admin.getUsername().equals(admin2.getUsername())) {
-//					System.out.println("HERE");
-//					approved = true;
-//				}
-//
-//			}
-//			if (approved) {
-//				// List<Student> students = studentDao.getStudents();
-//				// m.addAttribute("students", students);
-//				m.addAttribute("loggedinuser", admin.getUsername());
-//				RedirectView redirectView = new RedirectView();
-//				redirectView.setUrl(request.getContextPath() + "/pathlistoftaxis");
-//				return redirectView;
-//			} else {
-//				RedirectView redirectView = new RedirectView();
-//				redirectView.setUrl(request.getContextPath() + "/loginfailed");
-//				return redirectView;
-//			}
-//
-//		}
-
-
-	@RequestMapping("/loginfailed")
-	public String showLoginFailed(Model m) {
-		return "error";
+	@RequestMapping(value = "/incidents", method = RequestMethod.GET)
+	public String displayIncidents(Model m) {
+		return "login";
 	}
 	
-	@RequestMapping("/incidents")
-	public void displayIncidents(Model m) {
-		
+	@RequestMapping(value = "/new-incident", method = RequestMethod.GET)
+	public ModelAndView showNewIncidentPage(HttpServletRequest request) {
+	    ModelAndView mav = new ModelAndView("new-incident");
+	    mav.addObject("loggedinOfficer", request.getSession().getAttribute("loggedinOfficer"));
+	    return mav;
 	}
+
 	
 	@RequestMapping("/pathlistoftaxis")
 	public String showListOfAllTaxis(Model m) {
