@@ -88,8 +88,8 @@
 									<td>${incident.getVehicle().getMake()} ${incident.getVehicle().getModel()} ${incident.getVehicle().getYear()}</td>
 									<td>${incident.getVehicle().getOwnerName()}</td>
 									<td>${incident.getDescription()}</td>
-									<td><a href="${pageContext.request.contextPath}/edit-incident?incidentId=${incident.getIncidentId()}"><i class="fa fa-lg fa-edit"></i></a></td>
-									<td><a href="${pageContext.request.contextPath}/delete-incident?incidentId=${incident.getIncidentId()}"><i class="fa fa-lg fa-trash text-danger"></i></a></td>
+									<td><a href="${pageContext.request.contextPath}/edit-incident/${incident.getIncidentId()}"><i class="fa fa-lg fa-edit"></i></a></td>
+									<td><a href="${pageContext.request.contextPath}/delete-incident/${incident.getIncidentId()}"><i class="fa fa-lg fa-trash text-danger"></i></a></td>
 								</tr>
 							</c:forEach>
 						</tbody>

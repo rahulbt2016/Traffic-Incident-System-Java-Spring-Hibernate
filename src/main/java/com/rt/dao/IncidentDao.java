@@ -16,7 +16,7 @@ public class IncidentDao {
     @Autowired
     private HibernateTemplate hibernateTemplate;
 
-    // Save an incident
+    // Save/Update an incident
     public void saveIncident(Incident incident) {
         hibernateTemplate.saveOrUpdate(incident);
     }
@@ -30,6 +30,16 @@ public class IncidentDao {
 				.createQuery(hql, Incident.class)
 				.setParameter(1, officer)
 				.getResultList();
+    }
+    
+    // Get an incident by incidentId
+    public Incident getIncident(int incidentId) {
+        return hibernateTemplate.get(Incident.class, incidentId);
+    }
+    
+    // Delete an incident
+    public void deleteIncident(Incident incident) {
+        hibernateTemplate.delete(incident);
     }
 
 }

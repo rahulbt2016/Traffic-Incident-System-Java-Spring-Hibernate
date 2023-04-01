@@ -8,7 +8,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Traffic System - Report Incident</title>
+	<title>Traffic System - Edit Incident</title>
 	<!-- Bootstrap CSS -->
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 	<!-- Add Font Awesome CSS -->
@@ -68,7 +68,7 @@
 	      <li class="nav-item">
 	        <a class="nav-link" href="${pageContext.request.contextPath}/incidents"><i class="fa fa-home"></i> Home <span class="sr-only">(current)</span></a>
 	      </li>
-	      <li class="nav-item active">
+	      <li class="nav-item">
 	        <a class="nav-link" href="${pageContext.request.contextPath}/new-incident"><i class="fa fa-file"></i> Report Incident <span class="sr-only">(current)</span></a>
 	      </li>
 	    </ul>
@@ -90,11 +90,12 @@
 			</div>
 			<div class="col-md-9 mt-5">
 				<div id="content">
-					<h2 class="mb-5">Report Incident</h2>
-					<form action="add-incident" method="POST">
+					<h2 class="mb-5">Edit Incident</h2>
+					<form action="${pageContext.request.contextPath}/add-incident" method="POST">
+						<input type="text" hidden name="incidentId" value="${incident.getIncidentId()}">
 					    <div class="form-group">
 					        <label for="incidentDate">Incident Date:</label>
-					        <input type="date" class="form-control" id="incidentDate" name="incidentDate" required>
+					        <input type="date" class="form-control" id="incidentDate" name="incidentDate" value="${incident.getIncidentDate()}" required>
 					    </div>
 					    
 					    <div class="form-group">
@@ -102,7 +103,7 @@
 						  <select id="routeId" name="routeId" class="form-control select2" required>
 						    <option value="">Select Route</option>
 						    <c:forEach items="${routes}" var="route">
-						      <option value="${route.getRouteId()}">${route.getRouteName()}, ${route.getLocation()}</option>
+						      <option value="${route.getRouteId()}" ${incident.getRoute().getRouteId() == route.getRouteId() ? 'selected' : ''}>${route.getRouteName()}, ${route.getLocation()}</option>
 						    </c:forEach>
 						  </select>
 						</div>
@@ -111,15 +112,15 @@
 					    	<select id="vehicleId" name="vehicleId" class="form-control select2" required>
 						        <option value="">Select Vehicle</option>
 						        <c:forEach items="${vehicles}" var="vehicle">
-						            <option value="${vehicle.getVehicleId()}">${vehicle.getVehicleId()}  -  ${vehicle.getMake()} ${vehicle.getModel()} ${vehicle.getYear()}</option>
+						            <option value="${vehicle.getVehicleId()}" ${incident.getVehicle().getVehicleId() == vehicle.vehicleId ? 'selected' : ''}>${vehicle.getVehicleId()}  -  ${vehicle.getMake()} ${vehicle.getModel()} ${vehicle.getYear()}</option>
 						        </c:forEach>
 						    </select>
 					    </div>
 					    <div class="form-group">
 					    	<label for="description">Description:</label>
-					    	<textarea id="description" name="description" class="form-control" required></textarea>
+					    	<textarea id="description" name="description" class="form-control" required>${incident.getDescription()}</textarea>
 					    </div>
-					    <button type="submit" class="btn btn-primary">Submit</button>
+					    <button type="submit" class="btn btn-primary">Save</button>
 					</form>
 				</div>
 			</div>

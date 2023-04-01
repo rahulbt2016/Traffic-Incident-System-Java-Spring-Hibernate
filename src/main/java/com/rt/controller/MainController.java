@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -40,6 +41,12 @@ public class MainController {
 	public String home(Model m) {
 		return "login";
 	}
+	
+	@RequestMapping("/loginFailed")
+	public String showError(Model m) {
+		return "error";
+	}
+	
 
 	// handle login form
 	@RequestMapping(value = "/handle-login", method = RequestMethod.POST)
@@ -60,13 +67,12 @@ public class MainController {
 		}
 		
 		if (approved) {
-			m.addAttribute("loggedinOfficer", loggedInOfficer);
 			m.addAttribute("incidents", incidents);
 			HttpSession session = request.getSession();
 			session.setAttribute("loggedinOfficer", loggedInOfficer);
-			return "incidents";
+			return "redirect:/incidents";
 		} else {
-			return "error";
+			return "redirect:/loginFailed";
 		}
 
 	}
@@ -77,7 +83,7 @@ public class MainController {
 		HttpSession session = request.getSession();
 		session.invalidate();
 		
-		return "login";
+		return "redirect:/";
 	}
 
 	
@@ -93,7 +99,7 @@ public class MainController {
 			return "incidents";
 		}
 		
-		return "login";
+		return "redirect:/";
 	}
 	
 	@RequestMapping(value = "/new-incident", method = RequestMethod.GET)
@@ -111,7 +117,7 @@ public class MainController {
 			return "new-incident";
 		}
 		
-		return "login";
+		return "redirect:/";
 	}
 	
 	@RequestMapping(value = "/add-incident", method = RequestMethod.POST)
@@ -125,18 +131,52 @@ public class MainController {
 			int  routeId =  Integer.parseInt(request.getParameter("routeId"));
 			String  vehicleId = request.getParameter("vehicleId");
 			String description = request.getParameter("description");
+			String incidentId = request.getParameter("incidentId");
 			
 			Route route = routeDao.getRoute(routeId);
 			Vehicle vehicle = vehicleDao.getVehicle(vehicleId);
-			Incident incident = new Incident(incidentDate, route, vehicle, description, loggedInOfficer);
+			Incident incident = (incidentId != null) ?
+					incidentDao.getIncident(Integer.parseInt(incidentId)) :
+						new Incident();
+			
+			incident.setRoute(route);
+			incident.setVehicle(vehicle);
+			incident.setDescription(description);
+			incident.setIncidentDate(incidentDate);
+			incident.setOfficer(loggedInOfficer);
+			
 			incidentDao.saveIncident(incident);
 			
 			List<Incident> incidents = incidentDao.getIncidentsByOfficer(loggedInOfficer);
 			m.addAttribute("incidents", incidents);
-			return "incidents";
+			return "redirect:/incidents";
 		}
 		
-		return "login";
+		return "redirect:/";
+	}
+	
+	@RequestMapping(value = "/delete-incident/{incidentId}", method = RequestMethod.GET)
+	public String deleteIncident(Model m, HttpServletRequest request, @PathVariable int incidentId) {
+		Incident incident = incidentDao.getIncident(incidentId);
+		incidentDao.deleteIncident(incident);
+		
+		HttpSession session = request.getSession();
+		Officer loggedInOfficer = (Officer) session.getAttribute("loggedinOfficer");
+		
+		List<Incident> incidents = incidentDao.getIncidentsByOfficer(loggedInOfficer);
+		m.addAttribute("incidents", incidents);
+		return "redirect:/incidents";
+	}
+	
+	@RequestMapping(value = "/edit-incident/{incidentId}", method = RequestMethod.GET)
+	public String editIncident(Model m, HttpServletRequest request, @PathVariable int incidentId) {
+		Incident incident = incidentDao.getIncident(incidentId);
+		List<Vehicle> vehicles = (List<Vehicle>) vehicleDao.getVehicles();
+		List<Route> routes = (List<Route>) routeDao.getRoutes();
+		m.addAttribute("vehicles", vehicles);
+		m.addAttribute("routes", routes);
+		m.addAttribute("incident", incident);
+		return "edit-incident";
 	}
 
 }
